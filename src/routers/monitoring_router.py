@@ -6,6 +6,7 @@ from src.clients.monitoring_client import MonitoringClient
 
 from src.schemas.monitoring_schemas import (
     AddRequestInput,
+    AddServiceInput,
     GraphInput,
     RouteGraphInput,
 )
@@ -40,6 +41,17 @@ async def add_request(
         timestamp=add_request_input.request.timestamp,
         response_time=add_request_input.request.response_time,
         response_code=add_request_input.request.response_code,
+    )
+
+
+@router.post("/add-service")
+async def add_service(
+    add_service_input: AddServiceInput,
+    monitoring_client: MonitoringClient = Depends(get_monitoring_client),
+) -> None:
+    monitoring_client.add_route(
+        service_name=add_service_input.service_name,
+        channel_id=add_service_input.channel_id,
     )
 
 

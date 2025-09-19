@@ -36,3 +36,9 @@ class AddRequestInput(BaseModel):
     service_name: str
     route_name: str
     request: RequestInput
+
+
+class AddServiceInput(BaseModel):
+    service_name: str
+    channel_id: int
+

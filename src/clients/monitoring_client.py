@@ -78,24 +78,6 @@ class MonitoredRoute:
         self.requests: list[MonitoredRequest] = []
         self.channel_id: int = channel_id
 
-    # TODO : remove
-    def populate(self):
-        for i in range(200):
-            timestamp = datetime.now() - timedelta(
-                hours=random.randint(0, 72),
-                minutes=random.randint(0, 60),
-            )
-            response_time = random.randint(0, 300) / 100
-            response_code = random.choice(
-                ["200", "200", "200", "200", "200", "200", "404", "404", "500"]
-            )
-            request = MonitoredRequest(
-                timestamp=timestamp,
-                response_time=response_time,
-                response_code=response_code,
-            )
-            self.add_request(request)
-
     def add_request(self, request: MonitoredRequest):
         self.requests.append(request)
         self.requests = sorted(self.requests)
@@ -137,15 +119,9 @@ class MonitoredService:
             channel_id=channel_id,
         )
 
-    # TODO : remove
-    def populate(self, route_name: str):
-        if route_name not in self.routes.keys():
-            raise RouteNotFoundError
-        self.routes[route_name].populate()
-
     def add_request(self, route_name: str, request: MonitoredRequest):
         if route_name not in self.routes.keys():
-            raise RouteNotFoundError
+            self.add_route(route_name=route_name, channel_id=self.channel_id)
         self.routes[route_name].add_request(request)
 
     def get_route(self, route_name: str) -> MonitoredRoute:
@@ -161,11 +137,6 @@ class MonitoredService:
 class MonitoringClient:
     def __init__(self):
         self.services: dict[str, MonitoredService] = {}
-        self.add_service("service1", 1415770234442219600)
-        self.add_route("service1", "route1", 1415770272489013318)
-        self.populate("service1", "route1")
-        self.add_route("service1", "route2", 1415770272489013318)
-        self.populate("service1", "route2")
 
     def add_service(self, service_name: str, channel_id: int):
         if service_name in self.services.keys():
@@ -175,19 +146,15 @@ class MonitoringClient:
             channel_id=channel_id,
         )
 
-    def add_route(self, service_name: str, route_name: str, channel_id: int):
+    def add_route(self, service_name: str, route_name: str, channel_id: int = None):
         if service_name not in self.services.keys():
             raise ServiceNotFoundError
+        if not channel_id:
+            channel_id = self.services[service_name].channel_id
         self.services[service_name].add_route(
             route_name=route_name,
             channel_id=channel_id,
         )
-
-    # TODO : remove
-    def populate(self, service_name: str, route_name: str):
-        if service_name not in self.services.keys():
-            raise ServiceNotFoundError
-        self.services[service_name].populate(route_name)
 
     def add_request(
         self,
@@ -215,9 +182,7 @@ class MonitoringClient:
     def get_graphs(
         self, last_hours: int, graph_type: GraphType
     ) -> list[tuple[int, BytesIO]]:
-        print("2")
         graphs = []
-        print(self.get_services().items())
         for service_name, service in self.get_services().items():
             graphs.append(
                 (
