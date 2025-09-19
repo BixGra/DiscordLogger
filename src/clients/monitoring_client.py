@@ -1,6 +1,5 @@
 import enum
 import io
-import random
 from datetime import timedelta, datetime
 from enum import Enum
 from io import BytesIO
@@ -20,7 +19,6 @@ from src.schemas.monitoring_schemas import (
 from src.utils.errors import (
     DuplicateRouteError,
     DuplicateServiceError,
-    RouteNotFoundError,
     ServiceNotFoundError,
 )
 from src.utils.errors import (
