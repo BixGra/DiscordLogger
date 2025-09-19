@@ -1,0 +1,12 @@
+services:
+  discordlogger:
+    image: discordlogger:latest
+    container_name: discordlogger
+    networks:
+      - sandbixproxy_mynet
+    environment:
+      - DISCORD_TOKEN=${DISCORD_TOKEN}
+
+networks:
+  sandbixproxy_mynet:
+    external: true
