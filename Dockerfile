@@ -4,7 +4,7 @@ WORKDIR /etc/DiscordLogger
 
 COPY . /etc/DiscordLogger/.
 
-RUN pip install --upgrade pip && pip --no-cache-dir install -r /etc/DiscordLogger/requirements.txt
+RUN pip install --upgrade pip && pip install -r /etc/DiscordLogger/requirements.txt
 
 ENV PYTHONPATH $PYTHONPATH:$PATH:/etc/DiscordLogger/src/
 
